@@ -56,19 +56,12 @@ plugins:
 
 # Navigation
 nav:
-  - 🇩🇪 Deutsch:
-    - 'Übersicht': 'index.md'
-    - 'Erste Schritte': 'getting-started.md'
-    - 'Engine API': 'engine.md'
-    - 'API Referenz': 'api-reference.md'
-    - 'Modding SDK': 'modding-sdk.md'
-  - 🇺🇸 English:
-    - 'Overview': 'en/index.md'
-    - 'Getting Started': 'en/getting-started.md'
-    - 'Engine API': 'en/engine.md'
-    - 'API Reference': 'en/api-reference.md'
-    - 'Modding SDK': 'en/modding-sdk.md'
 
+  - 'Übersicht': 'index.md'
+  - 'Erste Schritte': 'getting-started.md'
+  - 'Engine API': 'engine.md'
+  - 'API Referenz': 'api-reference.md'
+  - 'Modding SDK': 'modding-sdk.md'
 # Extensions
 markdown_extensions:
   - admonition
