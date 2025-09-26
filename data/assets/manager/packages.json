@@ -1,0 +1,13 @@
+{
+    "packages": [
+        "com.package.library",
+        "com.mainstream"
+    ],
+    "com.mainstream": {
+        "name": "Mainstream",
+        "version": "1.0.0",
+        "description": "The main package for the application.",
+        "author": "Mainstream Dev Team",
+        "license": "MIT"
+    }
+}
