@@ -1,6 +1,19 @@
-# ToolOS
+# ToolOS SDK
 
-A lightweight Python app framework with mods, caching, settings and language API.
+A lightweight Python app framework with inheritance-based architecture, multi-language support, and modular design.
+
+## 📚 Documentation
+
+**🌐 Complete Documentation:** https://claytechnologie.github.io/ToolSDK/
+
+- 🇩🇪 **German**: https://claytechnologie.github.io/ToolSDK/
+- 🇺🇸 **English**: https://claytechnologie.github.io/ToolSDK/en/
+
+### Quick Links:
+- 🚀 [Getting Started](https://claytechnologie.github.io/ToolSDK/getting-started/)
+- 📋 [API Reference](https://claytechnologie.github.io/ToolSDK/api-reference/)
+- 🎮 [Modding SDK](https://claytechnologie.github.io/ToolSDK/modding-sdk/)
+- 🏗️ [Engine API](https://claytechnologie.github.io/ToolSDK/engine/)
 
 ## Installation
 

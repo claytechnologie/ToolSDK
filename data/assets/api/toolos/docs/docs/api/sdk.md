@@ -52,24 +52,30 @@ MyMod/
 │       ├── de.json
 │       ├── en.json
 │       └── ...
-└── src/
-    ├── app.py           # Haupt-Mod-Datei
-    └── engine/
-        └── engine.py    # Mod-Engine (optional)
+├── src/
+│       ├── app.py           # Haupt-Mod-Datei
+│       └── ...
 ```
 
 ## 📋 package.json
 
 ```json
 {
-    "name": "Shopping Simulator",
-    "version": "2.0.4",
-    "author": "Your Name",
-    "description": "A realistic shopping experience simulator",
-    "main": "src/app.py",
-    "languages": ["de", "en", "fr", "es"],
-    "dependencies": [],
-    "type": "mod"
+  "id": "00-00000",
+  "build": {
+    "source": "app.py",
+    "mesh": "Example Mod ",
+    "action": "start",
+    "path": "ModName\\source",
+    "sdk": {
+      "name": "com.ModName.EventAdress",
+      "version": "3.0.0",
+      "package": {
+        "b1": {
+          "COM": "com.ModName.EventListener",
+          "var": "Event.var:>var<"
+    }
+  }
 }
 ```
 
@@ -80,7 +86,7 @@ MyMod/
 **data/lang/de.json:**
 ```json
 {
-    "header": "=== Shopping Simulator ===",
+    "header": "=== Hauptmenü ===",
     "new_shopping": "Neuer Einkauf",
     "shopping_cart": "Warenkorb",
     "total_price": "Gesamtpreis",
@@ -93,7 +99,7 @@ MyMod/
 **data/lang/en.json:**
 ```json
 {
-    "header": "=== Shopping Simulator ===",
+    "header": "=== Main Menu ===",
     "new_shopping": "New Shopping",
     "shopping_cart": "Shopping Cart", 
     "total_price": "Total Price",

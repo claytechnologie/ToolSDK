@@ -19,17 +19,26 @@ theme:
     - search.share
     - content.code.copy
   palette:
+    # Palette toggle for dark mode (default)
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
     # Palette toggle for light mode
-    - scheme: default
-      primary: indigo
-      accent: indigo
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: purple
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-    # Palette toggle for dark mode
+    # Default fallback to dark mode
     - scheme: slate
-      primary: indigo
-      accent: indigo
+      primary: deep purple
+      accent: purple
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
@@ -47,10 +56,18 @@ plugins:
 
 # Navigation
 nav:
-  - 'Übersicht': 'index.md'
-  - 'Erste Schritte': 'getting-started.md'
-  - 'SDK': 'api/sdk.md'
-  - 'API Referenz': 'api-reference.md'
+  - 🇩🇪 Deutsch:
+    - 'Übersicht': 'index.md'
+    - 'Erste Schritte': 'getting-started.md'
+    - 'Engine API': 'engine.md'
+    - 'API Referenz': 'api-reference.md'
+    - 'Modding SDK': 'modding-sdk.md'
+  - 🇺🇸 English:
+    - 'Overview': 'en/index.md'
+    - 'Getting Started': 'en/getting-started.md'
+    - 'Engine API': 'en/engine.md'
+    - 'API Reference': 'en/api-reference.md'
+    - 'Modding SDK': 'en/modding-sdk.md'
 
 # Extensions
 markdown_extensions:
