@@ -1,9 +1,9 @@
     #? ################  SETTINGS API #####################
 
 class SettingsAPI:
-    
-    def __init__(self):
-        self.SETTINGSPATH = "data/assets/manager/settings.json"
+
+    def __init__(self, settings_path):
+        self.SETTINGSPATH = settings_path
         self.SETTINGS = self.LoadSettings()
         self.VERSION = self.SETTINGS.get("version")
         self.LANGUAGE = self.SETTINGS.get("language")
@@ -213,12 +213,12 @@ class LanguageAPI:
 
 class ToolAPI:
     
-    def __init__(self, **sdk):
+    def __init__(self, settings_path, **sdk):
         """Requires sdk{version, name}"""
         self.SDK = sdk
         self.SDK_VERSION = sdk.get("version")
         self.SDK_NAME = sdk.get("name")
-        self.Settings = SettingsAPI()
+        self.Settings = SettingsAPI(settings_path)
         if self.CheckCompatibility(self.Settings.VERSION, self.SDK_VERSION):
             self.Cache = CacheAPI(self.Settings.CACHEPATH)
             self.Temp = TempAPI(self.Settings.TEMPPATH)
