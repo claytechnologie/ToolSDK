@@ -1,0 +1,191 @@
+# Getting Started
+
+This guide will help you get started with ToolOS SDK and build your first application.
+
+## Installation
+
+Install ToolOS SDK via pip:
+
+```bash
+pip install toolos
+```
+
+## Your First ToolOS Application
+
+### 1. Create a Settings File
+
+First, create a `settings.json` file to configure your application:
+
+```json
+{
+  "version": "1.0.0",
+  "language": "en",
+  "mods_enabled": true,
+  "cachepath": "data/cache",
+  "temppath": "data/temp",
+  "logpath": "data/logs",
+  "languagepath": "data/lang"
+}
+```
+
+### 2. Basic Application Structure
+
+Create your main application file:
+
+```python
+# app.py
+import toolos as engine
+
+class MyApp(engine.Api):
+    def __init__(self):
+        super().__init__("settings.json")
+        self.isRunning = False
+        
+    def Run(self):
+        # Welcome message in current language  
+        welcome = self.Language.Translate("welcome")
+        print(welcome)
+        
+        # Set application state
+        self.StateMachine.SetState(self.StateMachine.MAINMENU)
+        
+        # Log application start
+        self.Log.WriteLog("app.log", "Application started")
+        
+        # Cache some data
+        self.Cache.WriteCacheFile("session.txt", "Session started")
+        
+        while self.isRunning:
+            if self.StateMachine.IsState(self.StateMachine.MAINMENU):
+                self.ShowMainMenu()
+            elif self.StateMachine.IsState(self.StateMachine.EXIT):
+                break
+                
+    def ShowMainMenu(self):
+        print("=== " + self.Language.Translate("header") + " ===")
+        print("1. " + self.Language.Translate("settings"))
+        print("2. " + self.Language.Translate("exit"))
+        
+        choice = input(self.Language.Translate("input"))
+        if choice == "2":
+            self.StateMachine.SetState(self.StateMachine.EXIT)
+        
+        # Log application start
+        self.Log.WriteLog("app.log", "Application started")
+
+        # Cache some data
+        self.Cache.WriteCacheFile("session.txt", "Session started")
+
+if __name__ == "__main__":
+    app = MyApp()
+    app.run()
+```
+
+### 3. Multi-Language Support
+
+ToolOS SDK includes built-in translations for 7 languages. To use them:
+ToolOS also includes an own package system for custom translations.
+
+```python
+# Get available languages
+languages = self.Language.GetAvailableLanguages()
+print(f"Available languages: {languages}")
+
+
+# Add custom language package.  For example 'add_to_cart' translation
+self.Language.AddLanguagePackage(lang="en", path="en_extra_translations.json")
+self.Language.AddLanguagePackage(lang="de", path="de_extra_translations.json")
+self.Language.Reload()
+
+# Translate text
+greeting = self.Language.Translate("welcome")
+settings = self.Language.Translate("settings")
+exit_msg = self.Language.Translate("add_to_cart")  # From custom package
+```
+
+### 4. State Management
+
+Use the state machine to control application flow:
+
+```python
+# Define application states
+if self.StateMachine.IsState(self.StateMachine.FIRST_ENTRY):
+    # First time running
+    self.setup_application()
+    self.StateMachine.SetState(self.StateMachine.MAINMENU)
+
+elif self.StateMachine.IsState(self.StateMachine.MAINMENU):
+    # Show main menu
+    self.show_main_menu()
+
+elif self.StateMachine.IsState(self.StateMachine.EXIT):
+    # Exit application
+    self.cleanup_and_exit()
+```
+
+### 5. Settings Management
+
+Handle dynamic settings changes:
+
+```python
+# Check if settings were updated
+if self.Settings.CheckIfUpdate():
+    # Reload settings
+    self.Settings.Update()
+
+    # Reload language if changed
+    self.Language.Reload()
+
+    print(self.Language.Translate("settings_updated"))
+```
+
+## Advanced Features
+
+### Custom Language Packages
+
+Add custom translations for your application:
+
+```python
+# Add custom language package
+self.Language.AddLanguagePackage("en", "my_translations.json")
+```
+
+### Caching System
+
+Efficiently manage temporary data:
+
+```python
+# Write cache file
+self.Cache.WriteCacheFile("user_prefs.json", json.dumps(preferences))
+
+# Read cache file
+if self.Cache.CacheExists("user_prefs.json"):
+    data = self.Cache.ReadCacheFile("user_prefs.json")
+    preferences = json.loads(data)
+```
+
+### Logging
+
+Keep track of application events:
+
+```python
+# Log different types of events
+self.Log.WriteLog("app.log", "User logged in")
+self.Log.WriteLog("error.log", f"Error: {str(exception)}")
+self.Log.WriteLog("debug.log", f"Processing item {item_id}")
+```
+
+## Next Steps
+
+- Explore the [API Reference](api/overview.md) for detailed documentation
+- Check out [Examples](examples.md) for more complex use cases
+- Learn about creating mods and extensions
+- Read the [Contributing Guide](contributing.md) to contribute to ToolOS SDK
+
+## Best Practices
+
+1. **Always initialize with settings file**: Use a proper `settings.json` configuration
+2. **Handle language changes**: Implement `Language.Reload()` for dynamic language switching
+3. **Use state machine**: Organize your application flow with the built-in state machine
+4. **Log important events**: Use the logging system for debugging and monitoring
+5. **Clean up temporary files**: Use `Temp.RemoveTempFile()` to manage temporary data

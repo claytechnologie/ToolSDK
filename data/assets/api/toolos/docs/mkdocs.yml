@@ -1,1 +1,67 @@
-site_name: My Docs
+site_name: ToolOS SDK Documentation
+site_description: A lightweight Python app framework with mods, caching, settings and language API
+site_author: Lilias
+site_url: https://claytechnologie.github.io/ToolSDK-docs/
+
+# Repository
+repo_name: claytechnologie/ToolSDK
+repo_url: https://github.com/claytechnologie/ToolSDK
+
+# Configuration
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - search.highlight
+    - search.share
+    - content.code.copy
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+# Plugins
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: sphinx
+            show_root_heading: true
+            show_source: false
+
+# Navigation
+nav:
+  - 'Übersicht': 'index.md'
+  - 'Erste Schritte': 'getting-started.md'
+  - 'SDK': 'api/sdk.md'
+  - 'API Referenz': 'api-reference.md'
+
+# Extensions
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - md_in_html
