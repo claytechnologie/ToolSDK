@@ -1,17 +1,9 @@
-class Engine:
+import toolos.api as api
+class Engine(api.Api):
     
-    def __init__(self):
-        import modules.loader as loader
-        import modules.settings as settings
-        from modules.settings import LanguageAsset as languageAsset
-        import modules.menu as menu
-
-        # Erst Settings vollständig laden
-        self.settings = settings.Settings()
-        
-        # Dann LanguageAsset mit den vollständigen Settings initialisieren
-        self.lang = languageAsset(self.settings)
-        
-        # Dann den Rest
-        self.loader = loader.ModLoader(settings=self.settings)
+    def __init__(self, settings_path):
+        super().__init__(settings_path=settings_path)
+        import source.modules.menu as menu
+        import source.modules.loader as loader
         self.menu = menu.MenuAsset(self)
+        self.loader = loader.ModLoader(self.Settings)

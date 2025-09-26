@@ -1,0 +1,25 @@
+{
+    "header": "=== Hauptmen\u00fc ===",
+    "errors": [],
+    "inputname": "Eingabe: > ",
+    "inputerror": "Ung\u00fcltige Eingabe, bitte erneut versuchen.",
+    "version": "3.0.1",
+    "mods_enabled": true,
+    "language": "de",
+    "authorized_ids": [
+        "00-00000",
+        "00-11111",
+        "00-000"
+    ],
+    "modpath": "data/lib/mods",
+    "mainpath": "data/lib/main",
+    "settingspath": "data/assets/manager/settings.json",
+    "packagepath": "data/assets/manager/packages.json",
+    "cachepath": "data/assets/cache",
+    "temppath": "data/assets/temp",
+    "logpath": "data/assets/logs",
+    "picturepath": "data/assets/pictures",
+    "apipath": "data/assets/api",
+    "languagepath": "data/assets/manager/lang",
+    "update": true
+}

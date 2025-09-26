@@ -259,5 +259,6 @@
   "ready": "Redo",
   "done": "Klar",
   "finished": "Avslutad",
-  "not_implemented": "Funktion ännu inte implementerad!"
+  "not_implemented": "Funktion ännu inte implementerad!",
+  "no_menu_data": "Inget meny tillgänglig"
 }

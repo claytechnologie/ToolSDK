@@ -1,0 +1,9 @@
+{
+  "id": "00-11111",
+  "build": {
+    "source": "taskmanager.py",
+    "mesh": "Task Manager v1.0",
+    "action": "start",
+    "path": "TaskManager\\source"
+  }
+}

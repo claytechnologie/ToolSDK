@@ -259,5 +259,6 @@
   "ready": "Hazır",
   "done": "Bitti",
   "finished": "Tamamlandı",
-  "not_implemented": "Fonksiyon henüz uygulanmadı!"
+  "not_implemented": "Fonksiyon henüz uygulanmadı!",
+  "no_menu_data": "Menü mevcut değil"
 }

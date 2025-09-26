@@ -5,9 +5,10 @@ class ModLoader:
         self.os = os
         import json
         self.js = json
-        self.MODPATH = settings.MODPATH
+        self.settings = settings
+        self.MODPATH = settings.Global("modpath")
         self.AUTHORIZED = {
-            "id": settings.AUTHORIZED_IDS # Always allowed IDs
+            "id": settings.Global("authorized_ids") # Always allowed IDs
         }
         self.MODS = os.listdir(self.MODPATH)
         self.AVAILABLE_MODS = self.CheckMods()

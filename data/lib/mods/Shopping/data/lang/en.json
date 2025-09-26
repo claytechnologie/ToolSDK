@@ -1,0 +1,16 @@
+{
+    "new_shopping": "New Shopping",
+    "header": "==== Main Menu ====",
+    "shopping_list": "Shopping List",
+    "add_item": "Add Item",
+    "remove_item": "Remove Item",
+    "total_price": "Total Price",
+    "checkout": "Checkout",
+    "cart": "Cart",
+    "product": "Product",
+    "quantity": "Quantity",
+    "price": "Price",
+    "welcome": "Welcome to Shopping!",
+    "exiting_app": "Exiting application...",
+    "input": "Select an option: > "
+}

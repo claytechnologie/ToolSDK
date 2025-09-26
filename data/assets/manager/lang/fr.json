@@ -259,5 +259,6 @@
   "ready": "Prêt",
   "done": "Fait",
   "finished": "Terminé",
-  "not_implemented": "Fonction non encore implémentée!"
+  "not_implemented": "Fonction non encore implémentée!",
+  "no_menu_data": "Aucun menu disponible"
 }

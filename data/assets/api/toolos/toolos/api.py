@@ -13,6 +13,8 @@ class SettingsAPI:
         self.LOGPATH = self.SETTINGS.get("logpath") if self.SETTINGS.get("logpath") else None
         self.APIPATH = self.SETTINGS.get("apipath") if self.SETTINGS.get("apipath") else None
         self.LANGUAGEPATH = self.SETTINGS.get("languagepath") if self.SETTINGS.get("languagepath") else None
+        self.MODPATH = self.SETTINGS.get("modpath") if self.SETTINGS.get("modpath") else None
+        self.MODS_ENABLED = self.SETTINGS.get("mods_enabled") if self.SETTINGS.get ("mods_enabled") else False
 
     def LoadSettings(self):
         import json
@@ -21,6 +23,31 @@ class SettingsAPI:
         
     def Global(self, key):
         return self.SETTINGS.get(key)
+    
+    def SetUpdate(self):
+        self.SETTINGS["update"] = True
+        import json
+        with open(self.SETTINGSPATH, 'w', encoding='utf-8') as f:
+            json.dump(self.SETTINGS, f, indent=4)
+            
+    def CheckIfUpdate(self):
+        return self.SETTINGS.get("update", False)
+    
+    
+    def Update(self):
+        import json
+        with open(self.SETTINGSPATH, 'r', encoding='utf-8') as f:
+            self.SETTINGS = json.load(f)
+        self.VERSION = self.SETTINGS.get("version") if self.SETTINGS.get("version") else None
+        self.LANGUAGE = self.SETTINGS.get("language") if self.SETTINGS.get("language") else None
+        self.PACKAGEPATH = self.SETTINGS.get("packagepath") if self.SETTINGS.get("packagepath") else None
+        self.CACHEPATH = self.SETTINGS.get("cachepath") if self.SETTINGS.get("cachepath") else None
+        self.TEMPPATH = self.SETTINGS.get("temppath") if self.SETTINGS.get("temppath") else None
+        self.LOGPATH = self.SETTINGS.get("logpath") if self.SETTINGS.get("logpath") else None
+        self.APIPATH = self.SETTINGS.get("apipath") if self.SETTINGS.get("apipath") else None
+        self.LANGUAGEPATH = self.SETTINGS.get("languagepath") if self.SETTINGS.get("languagepath") else None
+        self.MODPATH = self.SETTINGS.get("modpath") if self.SETTINGS.get("modpath") else None
+        self.MODS_ENABLED = self.SETTINGS.get("mods_enabled") if self.SETTINGS.get ("mods_enabled") else False
 
     #? ################  StateMachine API #####################
     
@@ -111,9 +138,22 @@ class TempAPI:
             return os.path.exists(f"{self.TEMPPATH}/{filename}")
         return os.path.exists(self.TEMPPATH)
 
-    def RemoveTempFile(self, filename):
-        import os
-        os.remove(f"{self.TEMPPATH}/{filename}")
+    def RemoveTempFile(self, filename=None):
+        if not filename: # leere Temp ordner
+            import os
+            for file in os.listdir(self.TEMPPATH):
+                file_path = os.path.join(self.TEMPPATH, file)
+                try:
+                    if os.path.isfile(file_path):
+                        os.remove(file_path)
+                except Exception:
+                    pass
+            return True
+        try:
+            import os
+            os.remove(f"{self.TEMPPATH}/{filename}")
+        except Exception:
+            return False
 
     #? ################  PACKAGE API #####################
 
@@ -309,24 +349,3 @@ class Api:
         self.Helper = HelperAPI(self.Settings)
         self.Language = LanguageAPI(self.Settings)
         self.StateMachine = StateMachineAPI()
-
-
-
-
-    #? ################  Testing #####################
-
-if __name__ == "__main__":
-    sdk = {"version": "3.0.1", "name": "ShoppingToolSDK"}
-    api = ToolAPI(**sdk)
-    
-    #?  Test aller Sprachen 
-    def test_languages():
-        languages = api.language.GetAvailableLanguages()
-        print(f"🌍 Verfügbare Sprachen: {languages}\n")
-        for lang in languages:
-            api.Settings.LANGUAGE = lang
-            api.language.Reload()
-            for key in api.language.GetAllTranslationKeys():
-                print(f"{key}: {api.language.Translate(key)}")
-                
-    test_languages()

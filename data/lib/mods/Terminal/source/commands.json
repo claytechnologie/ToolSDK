@@ -1,0 +1,51 @@
+{
+  "commands": [
+    {
+      "/.persona": {
+        "action": "run:/src/modules/apps/persona/app.py:main()",
+        "description": "Run the persona module for AI interactions",
+        "category": "modules"
+      },
+      "help": {
+        "action": "run:self:help()",
+        "description": "Show available commands and their descriptions",
+        "category": "system"
+      },
+      "exit": {
+        "action": "None",
+        "description": "Exit the C.L.A.Y Terminal",
+        "category": "system"
+      },
+      "ls": {
+        "action": "run:self:ls()",
+        "description": "List contents of current directory",
+        "category": "filesystem"
+      },
+      "pwd": {
+        "action": "run:self:pwd()",
+        "description": "Print current working directory",
+        "category": "filesystem"
+      },
+      "cd": {
+        "action": "run:self:cd()",
+        "description": "Change current directory",
+        "category": "filesystem"
+      },
+      "version": {
+        "action": "run:self:version()",
+        "description": "Show C.L.A.Y Terminal version information",
+        "category": "system"
+      },
+      "status": {
+        "action": "run:self:status()",
+        "description": "Show current terminal status and configuration",
+        "category": "system"
+      }
+    }
+  ],
+  "metadata": {
+    "version": "2.0.0",
+    "author": "C.L.A.Y Terminal Project",
+    "description": "Enhanced C.L.A.Y Terminal with improved command system"
+  }
+}

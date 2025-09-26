@@ -4,6 +4,7 @@ class MenuAsset:
     
     def __init__(self, api):
         self.api = api
+        self.Update()
         self.HEADER: str = None
         self.MENU: list = None
         self.EXIT = False
@@ -16,19 +17,7 @@ class MenuAsset:
     def ClearConsole(self):
         os.system('cls' if os.name == 'nt' else 'clear')
         
-    def ReloadMenu(self, settings):
-        """Lädt Menu mit neuen Settings neu"""
-        if self.RELOAD:
-            self.RELOAD = False
-            self.SetSettings(settings)
-            self.api.lang.Reload()
 
-            self.ClearConsole()
-            print(self.api.lang.MENU_RELOADED)
-            # Kurz warten damit User die Änderung sieht
-            import time
-            time.sleep(1)
-        
         
         
     def ShowHeader(self, header=None):
@@ -39,25 +28,26 @@ class MenuAsset:
             print()
         else:
             print("----------------------")
-            print(self.api.lang.HEADER)
+            print(self.api.Language.Translate("header"))
             print("----------------------")
             print()
             
     def ReadMenuData(self):
+        self.dMENU.clear()  # Menu-Cache leeren bevor neue Daten gelesen werden
         for item in self.MENU:
                 self.dMENU.append(item.get("build", {}).get('mesh'))
             
     def ShowMenu(self, menu: list = None, action=None):
         if self.dMENU and menu is None:
             for i, name in enumerate(self.dMENU):
-
-
                 print(i, name)
-        else:
+        elif menu is not None:
             for i, name in enumerate(menu):
                 print(i, name)
-        if action == 0:
-            self.dMENU = menu
+            if action == 0:
+                self.dMENU = menu
+        else:
+            self.api.Language.Translate("no_menu_data")
                 
             
             
@@ -82,15 +72,15 @@ class MenuAsset:
         else:
             return None
         
-    def SetSettings(self, settings):
+    def Update(self):
         
-        self.HEADER = settings.HEADER
-        self.ERRORS = settings.ERRORS
-        self.mods_enabled = settings.MODS_ENABLED
-        self.INPUTNAME = settings.INPUTNAME
-        self.VERSION = settings.VERSION
-        self.LANGUAGE = settings.LANGUAGE
-        self.TEMPPATH = settings.TEMPPATH
+        self.HEADER = self.api.Settings.Global("header") if self.api.Settings.Global("header") else None
+        self.ERRORS = self.api.Settings.Global("errors") if self.api.Settings.Global("errors") else None
+        self.mods_enabled = self.api.Settings.Global("mods_enabled") if self.api.Settings.Global("mods_enabled") else False
+        self.INPUTNAME = self.api.Settings.Global("inputname") if self.api.Settings.Global("inputname") else None
+        self.VERSION = self.api.Settings.Global("version") if self.api.Settings.Global("version") else None
+        self.LANGUAGE = self.api.Settings.Global("language") if self.api.Settings.Global("language") else None
+        self.TEMPPATH = self.api.Settings.Global("temppath") if self.api.Settings.Global("temppath") else None
         
         
     def startMenu(self, selection):
@@ -136,28 +126,3 @@ class MenuAsset:
             print(f"Error executing menu action: {e}")
             import traceback
             traceback.print_exc()
-    
-    def ClearTempFiles(self):
-        """Löscht alle Ordner und Dateien im temp (tmp) Ordner"""
-        import shutil
-        temp_path = self.TEMPPATH
-        
-        try:
-            if os.path.exists(temp_path):
-                # Alle Inhalte des tmp Ordners löschen
-                for item in os.listdir(temp_path):
-                    item_path = os.path.join(temp_path, item)
-                    if os.path.isdir(item_path):
-                        shutil.rmtree(item_path)  # Ordner rekursiv löschen
-                        print(f"🗑️ Ordner gelöscht: {item_path}")
-                    elif os.path.isfile(item_path):
-                        os.remove(item_path)  # Datei löschen
-                        print(f"🗑️ Datei gelöscht: {item_path}")
-                
-                return True
-            else:
-                return False
-                
-        except Exception as e:
-            print(f"❌ Fehler beim Leeren des Temp-Ordners: {e}")
-            return False

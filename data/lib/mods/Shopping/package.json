@@ -1,0 +1,15 @@
+{
+  "id": "00-00000",
+  "build": {
+    "source": "app.py",
+    "mesh": "Shopping Simulator v2.0.4",
+    "action": "main",
+    "path": "Shopping\\src",
+    "sdk": {
+      "name": "com.ShoppingSimulator.2182",
+      "version": "3.0.0",
+      "package": {
+             }
+    }
+  }
+}

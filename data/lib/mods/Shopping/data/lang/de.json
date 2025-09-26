@@ -1,0 +1,16 @@
+{
+    "new_shopping": "Neuer Einkauf",
+    "header": "==== Hauptmenü ====",
+    "shopping_list": "Einkaufsliste",
+    "add_item": "Produkt hinzufügen",
+    "remove_item": "Produkt entfernen",
+    "total_price": "Gesamtpreis",
+    "checkout": "Zur Kasse",
+    "cart": "Warenkorb",
+    "product": "Produkt",
+    "quantity": "Menge",
+    "price": "Preis",
+    "welcome": "Willkommen bei Shopping!",
+    "exiting_app": "Schließe Anwendung...",
+    "input": "Wählen Sie eine Option: > "
+}
