@@ -1,0 +1,8 @@
+{
+  "version": "1.0.0",
+  "language": "en",
+  "cachepath": "data/cache",
+  "temppath": "data/temp",
+  "logpath": "data/logs",
+  "languagepath": "data/lang"
+}

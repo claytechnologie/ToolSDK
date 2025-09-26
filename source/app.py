@@ -4,7 +4,7 @@ import os
 
 class App(engine.Engine):    
     
-    def __init__(self, settings_path=None):
+    def __init__(self, settings_path=None, standard_library=True):
         if settings_path is None:
             current_dir = os.path.dirname(os.path.abspath(__file__))
             project_root = os.path.dirname(current_dir)

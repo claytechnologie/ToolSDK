@@ -2,19 +2,37 @@
 
 class SettingsAPI:
 
-    def __init__(self, settings_path):
-        self.SETTINGSPATH = settings_path
-        self.SETTINGS = self.LoadSettings()
-        self.VERSION = self.SETTINGS.get("version") if self.SETTINGS.get("version") else None
-        self.LANGUAGE = self.SETTINGS.get("language") if self.SETTINGS.get("language") else None
-        self.PACKAGEPATH = self.SETTINGS.get("packagepath") if self.SETTINGS.get("packagepath") else None
-        self.CACHEPATH = self.SETTINGS.get("cachepath") if self.SETTINGS.get("cachepath") else None
-        self.TEMPPATH = self.SETTINGS.get("temppath") if self.SETTINGS.get("temppath") else None
-        self.LOGPATH = self.SETTINGS.get("logpath") if self.SETTINGS.get("logpath") else None
-        self.APIPATH = self.SETTINGS.get("apipath") if self.SETTINGS.get("apipath") else None
-        self.LANGUAGEPATH = self.SETTINGS.get("languagepath") if self.SETTINGS.get("languagepath") else None
-        self.MODPATH = self.SETTINGS.get("modpath") if self.SETTINGS.get("modpath") else None
-        self.MODS_ENABLED = self.SETTINGS.get("mods_enabled") if self.SETTINGS.get ("mods_enabled") else False
+    def __init__(self, app):
+        self.app = app
+        try:
+            self.SETTINGSPATH = self.app.SDK.SDK_SETTINGS
+            self.SETTINGS = self.LoadSettings()
+            self.VERSION = self.SETTINGS.get("version") if self.SETTINGS.get("version") else None
+            self.LANGUAGE = self.SETTINGS.get("language") if self.SETTINGS.get("language") else None
+            self.PACKAGEPATH = self.SETTINGS.get("packagepath") if self.SETTINGS.get("packagepath") else None
+            self.CACHEPATH = self.SETTINGS.get("cachepath") if self.SETTINGS.get("cachepath") else None
+            self.TEMPPATH = self.SETTINGS.get("temppath") if self.SETTINGS.get("temppath") else None
+            self.LOGPATH = self.SETTINGS.get("logpath") if self.SETTINGS.get("logpath") else None
+            self.APIPATH = self.SETTINGS.get("apipath") if self.SETTINGS.get("apipath") else None
+            self.LANGUAGEPATH = self.SETTINGS.get("languagepath") if self.SETTINGS.get("languagepath") else None
+            self.MODPATH = self.SETTINGS.get("modpath") if self.SETTINGS.get("modpath") else None
+            self.MODS_ENABLED = self.SETTINGS.get("mods_enabled") if self.SETTINGS.get ("mods_enabled") else False
+        except Exception:
+            import os
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            settings_path = os.path.join(current_dir, self.app.SDK.SDK_SETTINGS)
+            self.SETTINGSPATH = settings_path
+            self.SETTINGS = self.LoadSettings()
+            self.VERSION = self.SETTINGS.get("version") if self.SETTINGS.get("version") else None
+            self.LANGUAGE = self.SETTINGS.get("language") if self.SETTINGS.get("language") else None
+            self.PACKAGEPATH = self.SETTINGS.get("packagepath") if self.SETTINGS.get("packagepath") else None
+            self.CACHEPATH = self.SETTINGS.get("cachepath") if self.SETTINGS.get("cachepath") else None
+            self.TEMPPATH = self.SETTINGS.get("temppath") if self.SETTINGS.get("temppath") else None
+            self.LOGPATH = self.SETTINGS.get("logpath") if self.SETTINGS.get("logpath") else None
+            self.APIPATH = self.SETTINGS.get("apipath") if self.SETTINGS.get("apipath") else None
+            self.LANGUAGEPATH = self.SETTINGS.get("languagepath") if self.SETTINGS.get("languagepath") else None
+            self.MODPATH = self.SETTINGS.get("modpath") if self.SETTINGS.get("modpath") else None
+            self.MODS_ENABLED = self.SETTINGS.get("mods_enabled") if self.SETTINGS.get ("mods_enabled") else False          
 
     def LoadSettings(self):
         import json
@@ -231,34 +249,59 @@ class LogAPI:
 
 class ManagerAPI:
     
-    def __init__(self, api_path):
-        self.API_PATH = api_path
+    def __init__(self):
+        pass
         
         
+        
+    #? ################  GUI API #####################
+    
+class GuiAPI:
+    
+    def __init__(self):
+        pass
         
     #? ################  HELPER API #####################
 
 class HelperAPI:
     
-    def __init__(self, settings):
-        self.Settings = settings
+    def __init__(self, app):
+        self.app = app
+        self.ui = GuiAPI()
+        self.command = CommandAPI(app)
 
     def GetVersion(self):
-        return self.Settings.VERSION
+        return self.app.Settings.VERSION
 
     def GetLanguage(self):
-        return self.Settings.LANGUAGE
+        return self.app.Settings.LANGUAGE
     
-    #? ################  LANGUAGE API #####################
+    
+
+class CommandAPI:
+
+    def __init__(self, app):
+        self.app = app
+        
+    def Execute(self, command):
+        import subprocess
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+        return result.stdout, result.stderr, result.returncode
+
+    #? ################  LANGUAGE API #################
 
 class LanguageAPI:
-    
-    def __init__(self, settings):
+
+    def __init__(self, settings, standard_library=True):
         self.Settings = settings
         self.LANGUAGE = settings.LANGUAGE
         self.LANGUAGEPATH = settings.LANGUAGEPATH
         self.PACKAGES = []
-        self.language_data = self.load_language_data(self.LANGUAGE)
+        if standard_library:
+            import os
+            package_dir = os.path.dirname(os.path.abspath(__file__))
+            self.LANGUAGEPATH = os.path.join(package_dir, "data", "lang")
+        self.language_data = self.LoadLanguageData(self.LANGUAGE)
         
     #? Core Functions
 
@@ -266,14 +309,24 @@ class LanguageAPI:
     def Reload(self):
         """Reloading Language-Data and applied Language-Packages"""
         self.LANGUAGE = self.Settings.LANGUAGE
-        self.language_data = self.load_language_data(self.LANGUAGE)
+        self.language_data = self.LoadLanguageData(self.LANGUAGE)
         if self.PACKAGES:
             for package in self.PACKAGES:
                 if package["language"] == self.LANGUAGE:
                     self.language_data.update(package["data"])
+
+    def SetLanguageData(self, keys: dict=None, prefered_lang_reference=False):
+        if prefered_lang_reference:
+            # Verwende toolos package data/lang Verzeichnis
+            import os
+            package_dir = os.path.dirname(os.path.abspath(__file__))
+            self.LANGUAGEPATH = os.path.join(package_dir, "data", "lang")
+            self.language_data = self.LoadLanguageData(self.LANGUAGE)
+        elif keys:
+            self.language_data = keys
     
     # Loading Original Language-Data json formats from /assets/manager/lang/{'de', 'en', 'ru',..}.json    
-    def load_language_data(self, language):
+    def LoadLanguageData(self, language):
         """Loading Language-Data by parameter: language"""
         import json
         try:
@@ -308,25 +361,25 @@ class LanguageAPI:
         with open(datapath, 'r', encoding='utf-8') as f:
             data = json.load(f)
         self.PACKAGES.append({"language": language, "data": data})
+        
+        
 
     #? ################  TOOL API #####################
 
 class ToolAPI:
     
-    def __init__(self, settings_path, **sdk):
+    def __init__(self, **sdk):
         """Requires sdk{version, name}. Build for ToolOS"""
-        self.SDK = sdk
-        self.SDK_VERSION = sdk.get("version")
-        self.SDK_NAME = sdk.get("name")
-        self.Settings = SettingsAPI(settings_path)
-        if self.CheckCompatibility(self.Settings.VERSION, self.SDK_VERSION):
+        self.SDK = SDK(**sdk)
+        self.Settings = SettingsAPI(self)
+        if self.CheckCompatibility(self.Settings.VERSION, self.SDK.SDK_VERSION):
             self.Cache = CacheAPI(self.Settings.CACHEPATH)
             self.Temp = TempAPI(self.Settings.TEMPPATH)
             self.Package = PackageAPI(self.Settings.PACKAGEPATH)
             self.Log = LogAPI(self.Settings.LOGPATH)
-            self.manager = ManagerAPI(self.Settings.APIPATH)
-            self.helper = HelperAPI(self.Settings)
-            self.language = LanguageAPI(self.Settings)
+            self.manager = ManagerAPI()
+            self.helper = HelperAPI(self)
+            self.language = LanguageAPI(self.Settings, standard_library=self.SDK.SDK_LangLib)
             self.state_machine = StateMachineAPI()
 
     def CheckCompatibility(self, api_version, sdk_version: str):
@@ -338,14 +391,26 @@ class ToolAPI:
     #? ################  Global API #####################
     
 class Api:
-    def __init__(self, settings_path="settings.json"):
+    def __init__(self, **sdk):
         """ToolAPI's API-SDK. made for general use."""
-        self.Settings = SettingsAPI(settings_path)
+        self.SDK = SDK(**sdk)
+        self.Settings = SettingsAPI(self)
         self.Cache = CacheAPI(self.Settings.CACHEPATH)
         self.Temp = TempAPI(self.Settings.TEMPPATH)
         self.Package = PackageAPI(self.Settings.PACKAGEPATH)
         self.Log = LogAPI(self.Settings.LOGPATH)
-        self.Manager = ManagerAPI(self.Settings.APIPATH)
-        self.Helper = HelperAPI(self.Settings)
-        self.Language = LanguageAPI(self.Settings)
+        self.Manager = ManagerAPI()
+        self.Helper = HelperAPI(self)
+        self.Language = LanguageAPI(self.Settings, standard_library=self.SDK.SDK_LangLib)
         self.StateMachine = StateMachineAPI()
+        
+        
+class SDK:
+    
+    def __init__(self, **sdk):
+        """ToolAPI's SDK. made for developers."""
+        self.SDK = sdk
+        self.SDK_VERSION = sdk.get("version")
+        self.SDK_SETTINGS = sdk.get("settings_path")
+        self.SDK_NAME = sdk.get("name")
+        self.SDK_LangLib = sdk.get("standard_language_library")

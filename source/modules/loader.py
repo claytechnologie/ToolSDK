@@ -10,7 +10,16 @@ class ModLoader:
         self.AUTHORIZED = {
             "id": settings.Global("authorized_ids") # Always allowed IDs
         }
-        self.MODS = os.listdir(self.MODPATH)
+        
+        # Prüfe ob MODPATH existiert, wenn nicht erstelle es
+        if not os.path.exists(self.MODPATH):
+            print(f"Mod directory nicht gefunden: {self.MODPATH}")
+            print("Erstelle Mod-Verzeichnis...")
+            os.makedirs(self.MODPATH, exist_ok=True)
+            self.MODS = []
+        else:
+            self.MODS = os.listdir(self.MODPATH)
+            
         self.AVAILABLE_MODS = self.CheckMods()
         self.MODDED = []
         self.ReadMods()

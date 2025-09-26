@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "toolos"
-version = "1.4.1"
+version = "2.2.4"
 description = "A very Usefull API-Framework for All-Type Python Projects"
 authors = [
   { name = "Lilias", email = "lilias.ge@gmail.com" }
@@ -23,3 +23,6 @@ classifiers = [
 
 [tool.setuptools]
 packages = ["toolos"]
+
+[tool.setuptools.package-data]
+toolos = ["data/lang/*.json"]
