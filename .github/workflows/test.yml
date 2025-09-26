@@ -1,0 +1,134 @@
+name: ToolOS SDK Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, '3.10', '3.11', '3.12']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        # Keine externen Dependencies erforderlich - das SDK ist standalone!
+
+    - name: Test SDK Language System
+      run: |
+        python -c "
+        import sys
+        import os
+        sys.path.insert(0, '.')
+        from data.assets.api.tool_api import ToolAPI
+        
+        # Test SDK Initialization
+        sdk = {'name': 'TestSDK', 'version': '3.0.1'}
+        api = ToolAPI(**sdk)
+        print('✅ SDK initialized successfully')
+        
+        # Test Language System
+        languages = api.language.GetAvailableLanguages()
+        print(f'📋 Available languages: {languages}')
+        
+        # Test each language
+        for lang in ['de', 'en', 'fr', 'ru']:
+            api.Settings.LANGUAGE = lang
+            api.language.Reload()
+            welcome = api.language.Translate('welcome')
+            print(f'🌍 {lang.upper()}: {welcome}')
+        
+        print('✅ Language system test completed')
+        "
+
+    - name: Test File APIs
+      run: |
+        python -c "
+        import sys
+        import os
+        sys.path.insert(0, '.')
+        from data.assets.api.tool_api import ToolAPI
+        
+        # Test File APIs
+        sdk = {'name': 'TestSDK', 'version': '3.0.1'}
+        api = ToolAPI(**sdk)
+        
+        # Test Temp API
+        api.Temp.WriteTempFile('test.txt', 'GitHub Actions Test')
+        content = api.Temp.ReadTempFile('test.txt')
+        assert content == 'GitHub Actions Test'
+        print('✅ Temp API test passed')
+        
+        # Test Cache API  
+        api.Cache.WriteCacheFile('cache_test.txt', 'Cache Test Data')
+        cache_content = api.Cache.ReadCacheFile('cache_test.txt')
+        assert cache_content == 'Cache Test Data'
+        print('✅ Cache API test passed')
+        
+        # Test Log API
+        api.Log.WriteLog('test.log', 'GitHub Actions Log Test')
+        log_content = api.Log.ReadLog('test.log')
+        assert 'GitHub Actions Log Test' in log_content
+        print('✅ Log API test passed')
+        
+        print('✅ All file API tests completed')
+        "
+
+    - name: Test Examples
+      run: |
+        cd examples
+        python basic_multilang.py
+        python file_management.py
+
+    - name: Validate Language Files
+      run: |
+        python -c "
+        import json
+        import os
+        
+        lang_dir = 'data/assets/manager/lang'
+        required_languages = ['de', 'en', 'es', 'fr', 'ru', 'sv', 'tr']
+        
+        for lang in required_languages:
+            file_path = f'{lang_dir}/{lang}.json'
+            if os.path.exists(file_path):
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    print(f'✅ {lang}.json: {len(data)} translations')
+            else:
+                print(f'❌ Missing: {file_path}')
+                
+        print('✅ Language file validation completed')
+        "
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    - name: Install flake8
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8
+    - name: Lint with flake8
+      run: |
+        # Stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
