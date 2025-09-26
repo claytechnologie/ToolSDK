@@ -5,19 +5,50 @@ class SettingsAPI:
     def __init__(self, settings_path):
         self.SETTINGSPATH = settings_path
         self.SETTINGS = self.LoadSettings()
-        self.VERSION = self.SETTINGS.get("version")
-        self.LANGUAGE = self.SETTINGS.get("language")
-        self.PACKAGEPATH = self.SETTINGS.get("packagepath")
-        self.CACHEPATH = self.SETTINGS.get("cachepath")
-        self.TEMPPATH = self.SETTINGS.get("temppath")
-        self.LOGPATH = self.SETTINGS.get("logpath")
-        self.APIPATH = self.SETTINGS.get("apipath")
-        self.LANGUAGEPATH = self.SETTINGS.get("languagepath")
-        
+        self.VERSION = self.SETTINGS.get("version") if self.SETTINGS.get("version") else None
+        self.LANGUAGE = self.SETTINGS.get("language") if self.SETTINGS.get("language") else None
+        self.PACKAGEPATH = self.SETTINGS.get("packagepath") if self.SETTINGS.get("packagepath") else None
+        self.CACHEPATH = self.SETTINGS.get("cachepath") if self.SETTINGS.get("cachepath") else None
+        self.TEMPPATH = self.SETTINGS.get("temppath") if self.SETTINGS.get("temppath") else None
+        self.LOGPATH = self.SETTINGS.get("logpath") if self.SETTINGS.get("logpath") else None
+        self.APIPATH = self.SETTINGS.get("apipath") if self.SETTINGS.get("apipath") else None
+        self.LANGUAGEPATH = self.SETTINGS.get("languagepath") if self.SETTINGS.get("languagepath") else None
+
     def LoadSettings(self):
         import json
         with open(self.SETTINGSPATH, 'r', encoding='utf-8') as f:
             return json.load(f)
+        
+    def Global(self, key):
+        return self.SETTINGS.get(key)
+
+    #? ################  StateMachine API #####################
+    
+class StateMachineAPI:
+    STEP_1 = "step_1"
+    STEP_2 = "step_2"
+    STEP_3 = "step_3"
+    STEP_4 = "step_4"
+    STEP_5 = "step_5"
+    EXIT = "exit"
+    MAINMENU = "main_menu"
+    FIRST_ENTRY = "first_entry"
+    
+    
+    
+    def __init__(self):
+        """beginning with first_entry state"""
+        self.state = self.FIRST_ENTRY
+        
+    def SetState(self, new_state):
+        self.state = new_state
+        
+    def GetState(self):
+        return self.state
+    
+    def IsState(self, check_state):
+        return self.state == check_state
+    
 
     #? ################  CACHE API #####################
 
@@ -25,6 +56,10 @@ class CacheAPI:
     
     def __init__(self, cache_path):
         self.CACHEPATH = cache_path
+        if not self.CacheExists():
+            import os
+            os.makedirs(cache_path)
+        
         
     def WriteCacheFile(self, filename, content):
         with open(f"{self.CACHEPATH}/{filename}", 'w', encoding='utf-8') as f:
@@ -41,6 +76,12 @@ class CacheAPI:
     def RemoveCacheFile(self, filename):
         import os
         os.remove(f"{self.CACHEPATH}/{filename}")
+        
+    def CacheExists(self, filename=None):
+        import os
+        if filename:
+            return os.path.exists(f"{self.CACHEPATH}/{filename}")
+        return os.path.exists(self.CACHEPATH)
 
     #? ################  TEMP API #####################
 
@@ -48,6 +89,9 @@ class TempAPI:
     
     def __init__(self, temp_path):
         self.TEMPPATH = temp_path
+        if not self.TempExists():
+            import os
+            os.makedirs(temp_path)
         
     def WriteTempFile(self, filename, content):
         with open(f"{self.TEMPPATH}/{filename}", 'w', encoding='utf-8') as f:
@@ -61,10 +105,12 @@ class TempAPI:
         with open(f"{self.TEMPPATH}/{filename}", 'a', encoding='utf-8') as f:
             f.write(content + "\n")
     
-    def TempExists(self, filename):
+    def TempExists(self, filename=None):
         import os
-        return os.path.exists(f"{self.TEMPPATH}/{filename}")
-    
+        if filename:
+            return os.path.exists(f"{self.TEMPPATH}/{filename}")
+        return os.path.exists(self.TEMPPATH)
+
     def RemoveTempFile(self, filename):
         import os
         os.remove(f"{self.TEMPPATH}/{filename}")
@@ -111,6 +157,9 @@ class LogAPI:
     
     def __init__(self, log_path):
         self.LOGPATH = log_path
+        if not self.LogExists():
+            import os
+            os.makedirs(log_path)
         
     def WriteLog(self, filename, message):
         import datetime
@@ -129,6 +178,14 @@ class LogAPI:
     def ClearLog(self, filename):
         with open(f"{self.LOGPATH}/{filename}", 'w') as f:
             f.write("")
+               
+    def LogExists(self, filename=None):
+        import os
+        if filename:
+            return os.path.exists(f"{self.LOGPATH}/{filename}")
+        return os.path.exists(self.LOGPATH)
+            
+            
 
     #? ################  MANAGER API #####################
 
@@ -183,9 +240,12 @@ class LanguageAPI:
             with open(f"{self.LANGUAGEPATH}/{language}.json", 'r', encoding='utf-8') as f:
                 return json.load(f)
         except FileNotFoundError:
-            with open(f"{self.LANGUAGEPATH}/de.json", 'r', encoding='utf-8') as f:
-                return json.load(f)
-        
+            try:
+                with open(f"{self.LANGUAGEPATH}/de.json", 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except FileNotFoundError:
+                return {}
+
     #? Interaction Functions
     
     def Translate(self, key):
@@ -214,7 +274,7 @@ class LanguageAPI:
 class ToolAPI:
     
     def __init__(self, settings_path, **sdk):
-        """Requires sdk{version, name}"""
+        """Requires sdk{version, name}. Build for ToolOS"""
         self.SDK = sdk
         self.SDK_VERSION = sdk.get("version")
         self.SDK_NAME = sdk.get("name")
@@ -227,14 +287,29 @@ class ToolAPI:
             self.manager = ManagerAPI(self.Settings.APIPATH)
             self.helper = HelperAPI(self.Settings)
             self.language = LanguageAPI(self.Settings)
-        
-    
+            self.state_machine = StateMachineAPI()
+
     def CheckCompatibility(self, api_version, sdk_version: str):
         major, minor, patch = sdk_version.split(".")
         if major != api_version.split(".")[0]:
             raise ValueError(f"Inkompatible Versionen: API {api_version} != SDK {sdk_version}")
         return True
+
+    #? ################  Global API #####################
     
+class Api:
+    def __init__(self, settings_path="settings.json"):
+        """ToolAPI's API-SDK. made for general use."""
+        self.Settings = SettingsAPI(settings_path)
+        self.Cache = CacheAPI(self.Settings.CACHEPATH)
+        self.Temp = TempAPI(self.Settings.TEMPPATH)
+        self.Package = PackageAPI(self.Settings.PACKAGEPATH)
+        self.Log = LogAPI(self.Settings.LOGPATH)
+        self.Manager = ManagerAPI(self.Settings.APIPATH)
+        self.Helper = HelperAPI(self.Settings)
+        self.Language = LanguageAPI(self.Settings)
+        self.StateMachine = StateMachineAPI()
+
 
 
 
