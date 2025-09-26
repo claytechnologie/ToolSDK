@@ -59,9 +59,9 @@ nav:
 
   - 'Übersicht': 'index.md'
   - 'Erste Schritte': 'getting-started.md'
-  - 'Engine API': 'engine.md'
   - 'API Referenz': 'api-reference.md'
-  - 'Modding SDK': 'modding-sdk.md'
+  - 'Modding SDK': 'sdk.md'
+  
 # Extensions
 markdown_extensions:
   - admonition
